@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CGPA Calculator</title>
+  <!-- Animate.css for entrance animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    /* Reset & base styles */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+    /* Wave Video Background */
+    .wave-background {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+      overflow: hidden;
+    }
+    .wave-background video {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      /* Use your purple waves GIF here */
+      background: url('gettyimages-1483075734-640_adpp.mp4') no-repeat center center fixed;
+      background-size: cover;
+      overflow-x: hidden; 
+      color: #fff; 
+    }
+    /* Particles background container */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      pointer-events: none; /* So clicks go through to the page */
+    }
+    /* Main container styling */
+    .container {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+      width: 70%;
+      margin: 40px auto;
+      backdrop-filter: blur(10px);
+      animation: fadeInDown 1s;
+    }
+    /* Table styling with curvy edges */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      margin-top: 20px;
+      animation: fadeInUp 1s;
+    }
+    table tr {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background-color: #6a0572;
+    }
+    td {
+      border: 1px solid #4e4e50;
+    }
+    /* Icon styling inside table cells */
+    .course-icon {
+      margin-right: 8px;
+      color: #b280e0;
+    }
+    /* Input field styling with focus animations */
+    input {
+      background: #222;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      text-align: center;
+      width: 100%;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+    }
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #9d65c9;
+    }
+    /* Button styling with hover scale effect */
+    button {
+      margin-top: 20px;
+      padding: 14px 22px;
+      border: none;
+      background: #9d65c9;
+      color: white;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 18px;
+      transition: transform 0.3s, background 0.3s;
+    }
+    button:hover {
+      background: #b280e0;
+      transform: scale(1.1);
+    }
+    /* Progress bar container */
+    .progress-container {
+      width: 100%;
+      background: #444;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    /* Progress bar with dynamic width */
+    .progress-bar {
+      height: 20px;
+      width: 0;
+      background: linear-gradient(90deg, #b280e0, #9d65c9);
+      transition: width 1s ease-in-out;
+    }
+    /* Result text styling */
+    #result {
+      margin-top: 20px;
+      font-size: 22px;
+      animation: fadeIn 1s;
+    }
+  </style>
+</head>
+<body>
+    <div class="wave-background">
+        <video id="waveVideo" autoplay muted loop preload="auto">
+          <source src="gettyimages-1483075734-640_adpp.mp4" type="video/mp4" />
+        </video>
+      </div>
+  <!-- Particles container -->
+  <div id="particles-js"></div>
+  
+  <!-- Main content container -->
+  <div class="container animate__animated animate__fadeInDown">
+    <h2 class="animate__animated animate__fadeInDown">CGPA Calculator</h2>
+    <table class="animate__animated animate__fadeInUp">
+      <tr>
+        <th>Course Title</th>
+        <th>Credits</th>
+        <th>Marks (out of 100)</th>
+      </tr>
+      <tr>
+        <td><i class="fas fa-calculator course-icon"></i>Engineering Mathematics – I</td>
+        <td>3</td>
+        <td><input type="number" class="marks" data-credits="3"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-flask course-icon"></i>Engineering Chemistry</td>
+        <td>3</td>
+        <td><input type="number" class="marks" data-credits="3"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-vial course-icon"></i>Engineering Chemistry Lab</td>
+        <td>1</td>
+        <td><input type="number" class="marks" data-credits="1"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-cogs course-icon"></i>Engineering Mechanics</td>
+        <td>3</td>
+        <td><input type="number" class="marks" data-credits="3"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-wrench course-icon"></i>Engineering Mechanics Lab</td>
+        <td>1</td>
+        <td><input type="number" class="marks" data-credits="1"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-code course-icon"></i>Programming for Problem Solving</td>
+        <td>2</td>
+        <td><input type="number" class="marks" data-credits="2"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-laptop-code course-icon"></i>Programming for Problem Solving Lab</td>
+        <td>1</td>
+        <td><input type="number" class="marks" data-credits="1"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-tools course-icon"></i>Workshop Practices</td>
+        <td>2</td>
+        <td><input type="number" class="marks" data-credits="2"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-comments course-icon"></i>Communication Skills</td>
+        <td>2</td>
+        <td><input type="number" class="marks" data-credits="2"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-comment-dots course-icon"></i>Communication Skills Lab</td>
+        <td>1</td>
+        <td><input type="number" class="marks" data-credits="1"></td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-spa course-icon"></i>Yoga Education</td>
+        <td>2</td>
+        <td><input type="number" class="marks" data-credits="2"></td>
+      </tr>
+    </table>
+    <button onclick="calculateCGPA()">Calculate CGPA</button>
+    <h3 id="result" class="animate__animated"></h3>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+  
+  <!-- tsParticles Library for dynamic background particles -->
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2"></script>
+  <script>
+    // Make the particles background transparent so the GIF shows through
+    tsParticles.load('particles-js', {
+      fpsLimit: 60,
+      background: { color: { value: 'transparent' } },
+      particles: {
+        number: {
+          value: 80,
+          density: { enable: true, area: 800 }
+        },
+        color: { value: ['#9d65c9', '#b280e0', '#6a0572'] },
+        shape: { type: 'circle' },
+        opacity: {
+          value: 0.5,
+          random: true,
+          anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
+        },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: 'none',
+          random: true,
+          straight: false,
+          outModes: { default: 'bounce' },
+          attract: { enable: false, rotateX: 600, rotateY: 1200 }
+        }
+      },
+      detectRetina: true
+    });
+  </script>
+  
+  <script>
+    // Live update: recalculate CGPA as marks are entered
+    document.querySelectorAll('.marks').forEach(input => {
+      input.addEventListener('input', calculateCGPA);
+    });
+
+    function calculateCGPA() {
+      let totalCredits = 0, totalGradePoints = 0;
+      document.querySelectorAll('.marks').forEach(input => {
+        let marks = parseFloat(input.value) || 0;
+        let credits = parseFloat(input.getAttribute('data-credits'));
+        let gradePoint = marksToGradePoint(marks);
+        totalGradePoints += gradePoint * credits;
+        totalCredits += credits;
+      });
+      if (totalCredits === 0) return updateDisplay(0);
+      
+      let cgpa = (totalGradePoints / totalCredits).toFixed(2);
+      updateDisplay(cgpa);
+    }
+
+    function updateDisplay(cgpa) {
+      const resultElem = document.getElementById('result');
+      resultElem.innerText = `CGPA: ${cgpa}`;
+      resultElem.classList.add('animate__fadeIn');
+      const progress = Math.min((cgpa / 10) * 100, 100);
+      document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    function marksToGradePoint(marks) {
+      if (marks >= 90) return 10;
+      if (marks >= 80) return 9;
+      if (marks >= 70) return 8;
+      if (marks >= 60) return 7;
+      if (marks >= 50) return 6;
+      if (marks >= 40) return 5;
+      return 0;
+    }
+  </script>
+</body>
+</html>
