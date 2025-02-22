@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CGPA Calculator</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SGPA Calculator (CSE)</title>
+  <link rel="icon" type="image/jpeg" href="images.jpeg">
+
   <!-- Animate.css for entrance animations -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
   <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
   <style>
     /* Reset & base styles */
     * {
-      margin: 0; 
-      padding: 0; 
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
     /* Wave Video Background */
     .wave-background {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
       overflow: hidden;
     }
     .wave-background video {
-      width: 100%; height: 100%; object-fit: cover;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
-    body { 
-      font-family: 'Poppins', sans-serif; 
-      /* Use your purple waves GIF here */
+    body {
+      font-family: 'Poppins', sans-serif;
       background: url('gettyimages-1483075734-640_adpp.mp4') no-repeat center center fixed;
       background-size: cover;
-      overflow-x: hidden; 
-      color: #fff; 
+      overflow-x: hidden;
+      color: #fff;
     }
     /* Particles background container */
     #particles-js {
@@ -65,7 +79,8 @@
       border-radius: 10px;
       overflow: hidden;
     }
-    th, td {
+    th,
+    td {
       padding: 12px;
       text-align: center;
     }
@@ -135,17 +150,18 @@
   </style>
 </head>
 <body>
-    <div class="wave-background">
-        <video id="waveVideo" autoplay muted loop preload="auto">
-          <source src="gettyimages-1483075734-640_adpp.mp4" type="video/mp4" />
-        </video>
-      </div>
+  <!-- Wave video background -->
+  <div class="wave-background">
+    <video id="waveVideo" autoplay muted loop preload="auto">
+      <source src="gettyimages-1483075734-640_adpp.mp4" type="video/mp4" />
+    </video>
+  </div>
   <!-- Particles container -->
   <div id="particles-js"></div>
-  
+
   <!-- Main content container -->
   <div class="container animate__animated animate__fadeInDown">
-    <h2 class="animate__animated animate__fadeInDown">CGPA Calculator</h2>
+    <h2 class="animate__animated animate__fadeInDown">SGPA Calculator (CSE)</h2>
     <table class="animate__animated animate__fadeInUp">
       <tr>
         <th>Course Title</th>
@@ -208,17 +224,17 @@
         <td><input type="number" class="marks" data-credits="2"></td>
       </tr>
     </table>
-    <button onclick="calculateCGPA()">Calculate CGPA</button>
+    <button onclick="calculateSGPA()">Calculate SGPA</button>
     <h3 id="result" class="animate__animated"></h3>
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
     </div>
   </div>
-  
+
   <!-- tsParticles Library for dynamic background particles -->
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2"></script>
   <script>
-    // Make the particles background transparent so the GIF shows through
+    // Make the particles background transparent so the video shows through
     tsParticles.load('particles-js', {
       fpsLimit: 60,
       background: { color: { value: 'transparent' } },
@@ -251,45 +267,56 @@
       },
       detectRetina: true
     });
-  </script>
-  
-  <script>
-    // Live update: recalculate CGPA as marks are entered
+
+    // Live update: recalculate SGPA as marks are entered
     document.querySelectorAll('.marks').forEach(input => {
-      input.addEventListener('input', calculateCGPA);
+      input.addEventListener('input', calculateSGPA);
     });
 
-    function calculateCGPA() {
+    function calculateSGPA() {
       let totalCredits = 0, totalGradePoints = 0;
+
       document.querySelectorAll('.marks').forEach(input => {
         let marks = parseFloat(input.value) || 0;
-        let credits = parseFloat(input.getAttribute('data-credits'));
+        let credits = parseFloat(input.getAttribute('data-credits')) || 0;
         let gradePoint = marksToGradePoint(marks);
+
         totalGradePoints += gradePoint * credits;
         totalCredits += credits;
       });
-      if (totalCredits === 0) return updateDisplay(0);
-      
-      let cgpa = (totalGradePoints / totalCredits).toFixed(2);
-      updateDisplay(cgpa);
+
+      // If no credits, show N/A
+      let sgpa = totalCredits > 0
+        ? (totalGradePoints / totalCredits).toFixed(2)
+        : "N/A";
+
+      updateDisplay(sgpa);
     }
 
-    function updateDisplay(cgpa) {
+    function updateDisplay(sgpa) {
       const resultElem = document.getElementById('result');
-      resultElem.innerText = `CGPA: ${cgpa}`;
+      resultElem.innerText = `SGPA: ${sgpa}`;
       resultElem.classList.add('animate__fadeIn');
-      const progress = Math.min((cgpa / 10) * 100, 100);
+
+      const progress = sgpa === "N/A"
+        ? 0
+        : Math.min((sgpa / 10) * 100, 100);
       document.getElementById('progressBar').style.width = progress + '%';
     }
 
+    // Updated grading function (per the absolute grading system)
     function marksToGradePoint(marks) {
-      if (marks >= 90) return 10;
-      if (marks >= 80) return 9;
-      if (marks >= 70) return 8;
-      if (marks >= 60) return 7;
-      if (marks >= 50) return 6;
-      if (marks >= 40) return 5;
-      return 0;
+      if (marks >= 91) return 10.0;
+      if (marks >= 86) return 9.0;
+      if (marks >= 81) return 8.5;
+      if (marks >= 76) return 8.0;
+      if (marks >= 71) return 7.5;
+      if (marks >= 66) return 7.0;
+      if (marks >= 61) return 6.5;
+      if (marks >= 56) return 6.0;
+      if (marks >= 51) return 5.5;
+      if (marks >= 40) return 5.0;
+      return 0; // Below 40 is fail
     }
   </script>
 </body>
