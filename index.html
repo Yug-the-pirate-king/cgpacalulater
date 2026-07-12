@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SGPA Calculator (CSE)</title>
-  <link rel="icon" type="image/jpeg" href="images.jpeg">
+  <link rel="icon" type="image/jpeg" href="images.jpeg" />
 
   <!-- Animate.css for entrance animations -->
   <link
@@ -17,55 +17,76 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
   <style>
+    /* CSS Custom Properties */
+    :root {
+      --color-primary: #6a0572;
+      --color-secondary: #9d65c9;
+      --color-accent: #b280e0;
+      --color-bg-dark: rgba(0, 0, 0, 0.8);
+      --color-bg-row: rgba(0, 0, 0, 0.6);
+      --color-input-bg: #222;
+      --color-border: #4e4e50;
+      --color-progress-track: #444;
+      --color-text: #ffffff;
+      --radius-small: 4px;
+      --radius-medium: 8px;
+      --radius-large: 12px;
+      --transition-fast: 0.3s;
+    }
+
     /* Reset & base styles */
-    * {
+    *,
+    *::before,
+    *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      color: var(--color-text);
+    }
+
     /* Wave Video Background */
     .wave-background {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      inset: 0;
       z-index: -2;
       overflow: hidden;
     }
+
     .wave-background video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: url('gettyimages-1483075734-640_adpp.mp4') no-repeat center center fixed;
-      background-size: cover;
-      overflow-x: hidden;
-      color: #fff;
-    }
+
     /* Particles background container */
     #particles-js {
       position: fixed;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       z-index: -1;
-      top: 0;
-      left: 0;
-      pointer-events: none; /* So clicks go through to the page */
+      pointer-events: none;
     }
+
     /* Main container styling */
     .container {
-      background: rgba(0, 0, 0, 0.8);
+      background: var(--color-bg-dark);
       padding: 30px;
-      border-radius: 12px;
+      border-radius: var(--radius-large);
       box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
       width: 70%;
       margin: 40px auto;
       backdrop-filter: blur(10px);
       animation: fadeInDown 1s;
     }
+
+    h2 {
+      text-align: center;
+    }
+
     /* Table styling with curvy edges */
     table {
       width: 100%;
@@ -74,78 +95,102 @@
       margin-top: 20px;
       animation: fadeInUp 1s;
     }
-    table tr {
-      background: rgba(0, 0, 0, 0.6);
+
+    table tbody tr {
+      background: var(--color-bg-row);
       border-radius: 10px;
       overflow: hidden;
     }
+
     th,
     td {
       padding: 12px;
       text-align: center;
     }
+
     th {
-      background-color: #6a0572;
+      background-color: var(--color-primary);
     }
+
     td {
-      border: 1px solid #4e4e50;
+      border: 1px solid var(--color-border);
     }
+
     /* Icon styling inside table cells */
     .course-icon {
       margin-right: 8px;
-      color: #b280e0;
+      color: var(--color-accent);
     }
+
     /* Input field styling with focus animations */
-    input {
-      background: #222;
-      color: #fff;
+    .marks-input {
+      background: var(--color-input-bg);
+      color: var(--color-text);
       border: none;
       padding: 10px;
       text-align: center;
       width: 100%;
-      transition: all 0.3s ease;
-      border-radius: 4px;
+      transition: all var(--transition-fast) ease;
+      border-radius: var(--radius-small);
     }
-    input:focus {
+
+    .marks-input:focus {
       outline: none;
-      box-shadow: 0 0 10px #9d65c9;
+      box-shadow: 0 0 10px var(--color-secondary);
     }
+
     /* Button styling with hover scale effect */
-    button {
+    .calculate-button {
       margin-top: 20px;
       padding: 14px 22px;
       border: none;
-      background: #9d65c9;
-      color: white;
+      background: var(--color-secondary);
+      color: var(--color-text);
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: var(--radius-medium);
       font-size: 18px;
-      transition: transform 0.3s, background 0.3s;
+      transition: transform var(--transition-fast), background var(--transition-fast);
     }
-    button:hover {
-      background: #b280e0;
+
+    .calculate-button:hover {
+      background: var(--color-accent);
       transform: scale(1.1);
     }
+
     /* Progress bar container */
     .progress-container {
       width: 100%;
-      background: #444;
-      border-radius: 8px;
+      background: var(--color-progress-track);
+      border-radius: var(--radius-medium);
       overflow: hidden;
       margin-top: 20px;
     }
+
     /* Progress bar with dynamic width */
     .progress-bar {
       height: 20px;
       width: 0;
-      background: linear-gradient(90deg, #b280e0, #9d65c9);
+      background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
       transition: width 1s ease-in-out;
     }
+
     /* Result text styling */
-    #result {
+    .result-display {
       margin-top: 20px;
       font-size: 22px;
+      text-align: center;
       animation: fadeIn 1s;
+    }
+
+    /* Footer styling */
+    .app-footer {
+      text-align: center;
+      padding: 10px;
+      background: var(--color-bg-dark);
+      color: var(--color-text);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
 
     /* Mobile-friendly Media Queries */
@@ -157,15 +202,15 @@
       th, td {
         padding: 8px;
       }
-      button {
+      .calculate-button {
         font-size: 16px;
         padding: 12px 18px;
       }
-      #result {
+      .result-display {
         font-size: 20px;
       }
     }
-    
+
     @media (max-width: 480px) {
       .container {
         width: 95%;
@@ -175,11 +220,11 @@
         padding: 6px;
         font-size: 14px;
       }
-      button {
+      .calculate-button {
         font-size: 14px;
         padding: 10px 16px;
       }
-      #result {
+      .result-display {
         font-size: 18px;
       }
     }
@@ -196,156 +241,181 @@
   <div id="particles-js"></div>
 
   <!-- Main content container -->
-  <div class="container animate__animated animate__fadeInDown">
+  <main class="container animate__animated animate__fadeInDown">
     <h2 class="animate__animated animate__fadeInDown">SGPA Calculator (CSE)</h2>
     <table class="animate__animated animate__fadeInUp">
-      <tr>
-        <th>Course Title</th>
-        <th>Credits</th>
-        <th>Marks (out of 100)</th>
-      </tr>
-      <tr>
-        <td><i class="fas fa-calculator course-icon"></i>Engineering Mathematics – I</td>
-        <td>3</td>
-        <td><input type="number" class="marks" data-credits="3"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-flask course-icon"></i>Engineering Chemistry</td>
-        <td>3</td>
-        <td><input type="number" class="marks" data-credits="3"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-vial course-icon"></i>Engineering Chemistry Lab</td>
-        <td>1</td>
-        <td><input type="number" class="marks" data-credits="1"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-cogs course-icon"></i>Engineering Mechanics</td>
-        <td>3</td>
-        <td><input type="number" class="marks" data-credits="3"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-wrench course-icon"></i>Engineering Mechanics Lab</td>
-        <td>1</td>
-        <td><input type="number" class="marks" data-credits="1"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-code course-icon"></i>Programming for Problem Solving</td>
-        <td>2</td>
-        <td><input type="number" class="marks" data-credits="2"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-laptop-code course-icon"></i>Programming for Problem Solving Lab</td>
-        <td>1</td>
-        <td><input type="number" class="marks" data-credits="1"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-tools course-icon"></i>Workshop Practices</td>
-        <td>2</td>
-        <td><input type="number" class="marks" data-credits="2"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-comments course-icon"></i>Communication Skills</td>
-        <td>2</td>
-        <td><input type="number" class="marks" data-credits="2"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-comment-dots course-icon"></i>Communication Skills Lab</td>
-        <td>1</td>
-        <td><input type="number" class="marks" data-credits="1"></td>
-      </tr>
-      <tr>
-        <td><i class="fas fa-spa course-icon"></i>Yoga Education</td>
-        <td>2</td>
-        <td><input type="number" class="marks" data-credits="2"></td>
-      </tr>
+      <thead>
+        <tr>
+          <th>Course Title</th>
+          <th>Credits</th>
+          <th>Marks (out of 100)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><i class="fas fa-calculator course-icon" aria-hidden="true"></i>Engineering Mathematics – I</td>
+          <td>3</td>
+          <td><input type="number" class="marks-input" data-credits="3" min="0" max="100" step="1" aria-label="Marks for Engineering Mathematics I"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-flask course-icon" aria-hidden="true"></i>Engineering Chemistry</td>
+          <td>3</td>
+          <td><input type="number" class="marks-input" data-credits="3" min="0" max="100" step="1" aria-label="Marks for Engineering Chemistry"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-vial course-icon" aria-hidden="true"></i>Engineering Chemistry Lab</td>
+          <td>1</td>
+          <td><input type="number" class="marks-input" data-credits="1" min="0" max="100" step="1" aria-label="Marks for Engineering Chemistry Lab"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-cogs course-icon" aria-hidden="true"></i>Engineering Mechanics</td>
+          <td>3</td>
+          <td><input type="number" class="marks-input" data-credits="3" min="0" max="100" step="1" aria-label="Marks for Engineering Mechanics"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-wrench course-icon" aria-hidden="true"></i>Engineering Mechanics Lab</td>
+          <td>1</td>
+          <td><input type="number" class="marks-input" data-credits="1" min="0" max="100" step="1" aria-label="Marks for Engineering Mechanics Lab"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-code course-icon" aria-hidden="true"></i>Programming for Problem Solving</td>
+          <td>2</td>
+          <td><input type="number" class="marks-input" data-credits="2" min="0" max="100" step="1" aria-label="Marks for Programming for Problem Solving"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-laptop-code course-icon" aria-hidden="true"></i>Programming for Problem Solving Lab</td>
+          <td>1</td>
+          <td><input type="number" class="marks-input" data-credits="1" min="0" max="100" step="1" aria-label="Marks for Programming for Problem Solving Lab"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-tools course-icon" aria-hidden="true"></i>Workshop Practices</td>
+          <td>2</td>
+          <td><input type="number" class="marks-input" data-credits="2" min="0" max="100" step="1" aria-label="Marks for Workshop Practices"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-comments course-icon" aria-hidden="true"></i>Communication Skills</td>
+          <td>2</td>
+          <td><input type="number" class="marks-input" data-credits="2" min="0" max="100" step="1" aria-label="Marks for Communication Skills"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-comment-dots course-icon" aria-hidden="true"></i>Communication Skills Lab</td>
+          <td>1</td>
+          <td><input type="number" class="marks-input" data-credits="1" min="0" max="100" step="1" aria-label="Marks for Communication Skills Lab"></td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-spa course-icon" aria-hidden="true"></i>Yoga Education</td>
+          <td>2</td>
+          <td><input type="number" class="marks-input" data-credits="2" min="0" max="100" step="1" aria-label="Marks for Yoga Education"></td>
+        </tr>
+      </tbody>
     </table>
-    <button onclick="calculateSGPA()">Calculate SGPA</button>
-    <h3 id="result" class="animate__animated"></h3>
+    <button type="button" class="calculate-button" id="calculateButton">Calculate SGPA</button>
+    <h3 id="result" class="result-display animate__animated"></h3>
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
     </div>
-    <footer style="text-align: center; padding: 10px; background: rgba(0, 0, 0, 0.8); color: white; position: fixed; bottom: 0; width: 100%;">
-      Developed by <strong>YUG SHAH</strong> 
-    </footer>
-  
-  </div>
+  </main>
+
+  <footer class="app-footer">
+    Developed by <strong>YUG SHAH</strong>
+  </footer>
 
   <!-- tsParticles Library for dynamic background particles -->
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2"></script>
   <script>
-    // Make the particles background transparent so the video shows through
-    tsParticles.load('particles-js', {
-      fpsLimit: 60,
-      background: { color: { value: 'transparent' } },
-      particles: {
-        number: {
-          value: 80,
-          density: { enable: true, area: 800 }
-        },
-        color: { value: ['#9d65c9', '#b280e0', '#6a0572'] },
-        shape: { type: 'circle' },
-        opacity: {
-          value: 0.5,
-          random: true,
-          anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
-        },
-        size: {
-          value: 3,
-          random: true,
-          anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
-        },
-        move: {
-          enable: true,
-          speed: 1,
-          direction: 'none',
-          random: true,
-          straight: false,
-          outModes: { default: 'bounce' },
-          attract: { enable: false, rotateX: 600, rotateY: 1200 }
-        }
-      },
-      detectRetina: true
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeParticles();
+      initializeCalculator();
     });
 
-    // Live update: recalculate SGPA as marks are entered
-    document.querySelectorAll('.marks').forEach(input => {
-      input.addEventListener('input', calculateSGPA);
-    });
+    function initializeParticles() {
+      if (typeof tsParticles === 'undefined') {
+        return;
+      }
+
+      tsParticles.load('particles-js', {
+        fpsLimit: 60,
+        background: { color: { value: 'transparent' } },
+        particles: {
+          number: {
+            value: 80,
+            density: { enable: true, area: 800 }
+          },
+          color: { value: ['#9d65c9', '#b280e0', '#6a0572'] },
+          shape: { type: 'circle' },
+          opacity: {
+            value: 0.5,
+            random: true,
+            anim: { enable: true, speed: 1, opacity_min: 0.1, sync: false }
+          },
+          size: {
+            value: 3,
+            random: true,
+            anim: { enable: true, speed: 2, size_min: 0.1, sync: false }
+          },
+          move: {
+            enable: true,
+            speed: 1,
+            direction: 'none',
+            random: true,
+            straight: false,
+            outModes: { default: 'bounce' },
+            attract: { enable: false, rotateX: 600, rotateY: 1200 }
+          }
+        },
+        detectRetina: true
+      });
+    }
+
+    function initializeCalculator() {
+      const marksInputs = document.querySelectorAll('.marks-input');
+      const calculateButton = document.getElementById('calculateButton');
+
+      marksInputs.forEach(input => {
+        input.addEventListener('input', calculateSGPA);
+      });
+
+      calculateButton.addEventListener('click', calculateSGPA);
+    }
 
     function calculateSGPA() {
-      let totalCredits = 0, totalGradePoints = 0;
+      let totalCredits = 0;
+      let totalWeightedGradePoints = 0;
 
-      document.querySelectorAll('.marks').forEach(input => {
-        let marks = parseFloat(input.value) || 0;
-        let credits = parseFloat(input.getAttribute('data-credits')) || 0;
-        let gradePoint = marksToGradePoint(marks);
+      document.querySelectorAll('.marks-input').forEach(input => {
+        const marks = parseFloat(input.value) || 0;
+        const credits = parseFloat(input.dataset.credits) || 0;
+        const gradePoint = convertMarksToGradePoint(marks);
 
-        totalGradePoints += gradePoint * credits;
+        totalWeightedGradePoints += gradePoint * credits;
         totalCredits += credits;
       });
 
-      // If no credits, show N/A
-      let sgpa = totalCredits > 0
-        ? (totalGradePoints / totalCredits).toFixed(2)
-        : "N/A";
+      const sgpa = totalCredits > 0
+        ? (totalWeightedGradePoints / totalCredits).toFixed(2)
+        : null;
 
-      updateDisplay(sgpa);
+      renderResult(sgpa);
     }
 
-    function updateDisplay(sgpa) {
-      const resultElem = document.getElementById('result');
-      resultElem.innerText = `SGPA: ${sgpa}`;
-      resultElem.classList.add('animate__fadeIn');
+    function renderResult(sgpa) {
+      const resultElement = document.getElementById('result');
+      const progressBar = document.getElementById('progressBar');
 
-      const progress = sgpa === "N/A"
-        ? 0
-        : Math.min((sgpa / 10) * 100, 100);
-      document.getElementById('progressBar').style.width = progress + '%';
+      if (sgpa === null) {
+        resultElement.textContent = 'SGPA: N/A';
+        progressBar.style.width = '0%';
+      } else {
+        resultElement.textContent = `SGPA: ${sgpa}`;
+        const progressPercentage = Math.min((parseFloat(sgpa) / 10) * 100, 100);
+        progressBar.style.width = `${progressPercentage}%`;
+      }
+
+      resultElement.classList.add('animate__fadeIn');
     }
 
     // Updated grading function (per the absolute grading system)
-    function marksToGradePoint(marks) {
+    function convertMarksToGradePoint(marks) {
       if (marks >= 91) return 10.0;
       if (marks >= 86) return 9.0;
       if (marks >= 81) return 8.5;
