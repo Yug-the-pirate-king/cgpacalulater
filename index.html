@@ -3,9 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive SGPA calculator for CSE first-year courses with animated particle background." />
   <title>SGPA Calculator (CSE)</title>
   <link rel="icon" type="image/jpeg" href="images.jpeg" />
 
+  <!-- Poppins font used by the design -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+  />
   <!-- Animate.css for entrance animations -->
   <link
     rel="stylesheet"
@@ -310,7 +318,7 @@
       </tbody>
     </table>
     <button type="button" class="calculate-button" id="calculateButton">Calculate SGPA</button>
-    <h3 id="result" class="result-display animate__animated"></h3>
+    <h3 id="result" class="result-display animate__animated" aria-live="polite"></h3>
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -323,11 +331,39 @@
   <!-- tsParticles Library for dynamic background particles -->
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2"></script>
   <script>
+    /**
+     * Cached references to each course row.
+     * Each entry holds the input element and its numeric credits to avoid
+     * repeated DOM lookups and re-parsing during every SGPA calculation.
+     * @type {Array<{input: HTMLInputElement, credits: number}>}
+     */
+    const courseEntries = [];
+
+    /**
+     * Cached reference to the result heading element.
+     * @type {HTMLElement|null}
+     */
+    let resultElement = null;
+
+    /**
+     * Cached reference to the progress bar element.
+     * @type {HTMLElement|null}
+     */
+    let progressBarElement = null;
+
+    /**
+     * Entry point: initialize the particle background and the calculator
+     * once the DOM is fully parsed.
+     */
     document.addEventListener('DOMContentLoaded', () => {
       initializeParticles();
       initializeCalculator();
     });
 
+    /**
+     * Loads the tsParticles background if the library is available.
+     * Falls back silently when the CDN script is blocked or fails to load.
+     */
     function initializeParticles() {
       if (typeof tsParticles === 'undefined') {
         return;
@@ -367,29 +403,53 @@
       });
     }
 
+    /**
+     * Prepares the SGPA calculator.
+     * Caches course inputs/credits and sets up a single delegated input listener
+     * plus the explicit calculate button click listener.
+     */
     function initializeCalculator() {
-      const marksInputs = document.querySelectorAll('.marks-input');
-      const calculateButton = document.getElementById('calculateButton');
+      const tableBody = document.querySelector('table tbody');
+      const inputs = document.querySelectorAll('.marks-input');
 
-      marksInputs.forEach(input => {
-        input.addEventListener('input', calculateSGPA);
+      resultElement = document.getElementById('result');
+      progressBarElement = document.getElementById('progressBar');
+
+      // Build a compact cache so calculateSGPA avoids DOM traversal.
+      inputs.forEach(input => {
+        courseEntries.push({
+          input: input,
+          credits: parseFloat(input.dataset.credits) || 0
+        });
       });
 
-      calculateButton.addEventListener('click', calculateSGPA);
+      // Single delegated listener handles all mark input changes.
+      tableBody.addEventListener('input', (event) => {
+        if (event.target.classList.contains('marks-input')) {
+          calculateSGPA();
+        }
+      });
+
+      document.getElementById('calculateButton').addEventListener('click', calculateSGPA);
     }
 
+    /**
+     * Computes the Semester Grade Point Average (SGPA).
+     * Uses the cached course entries for O(n) time with a single pass and
+     * no repeated DOM queries.
+     */
     function calculateSGPA() {
       let totalCredits = 0;
       let totalWeightedGradePoints = 0;
 
-      document.querySelectorAll('.marks-input').forEach(input => {
+      for (let i = 0; i < courseEntries.length; i++) {
+        const { input, credits } = courseEntries[i];
         const marks = parseFloat(input.value) || 0;
-        const credits = parseFloat(input.dataset.credits) || 0;
         const gradePoint = convertMarksToGradePoint(marks);
 
         totalWeightedGradePoints += gradePoint * credits;
         totalCredits += credits;
-      });
+      }
 
       const sgpa = totalCredits > 0
         ? (totalWeightedGradePoints / totalCredits).toFixed(2)
@@ -398,23 +458,31 @@
       renderResult(sgpa);
     }
 
+    /**
+     * Updates the result heading and progress bar based on the computed SGPA.
+     * @param {string|null} sgpa - The SGPA value formatted to two decimals,
+     *                             or null when no credits have been entered.
+     */
     function renderResult(sgpa) {
-      const resultElement = document.getElementById('result');
-      const progressBar = document.getElementById('progressBar');
-
       if (sgpa === null) {
         resultElement.textContent = 'SGPA: N/A';
-        progressBar.style.width = '0%';
+        progressBarElement.style.width = '0%';
       } else {
         resultElement.textContent = `SGPA: ${sgpa}`;
-        const progressPercentage = Math.min((parseFloat(sgpa) / 10) * 100, 100);
-        progressBar.style.width = `${progressPercentage}%`;
+        const numericSgpa = parseFloat(sgpa);
+        const progressPercentage = Math.min(Math.max((numericSgpa / 10) * 100, 0), 100);
+        progressBarElement.style.width = `${progressPercentage}%`;
       }
 
       resultElement.classList.add('animate__fadeIn');
     }
 
-    // Updated grading function (per the absolute grading system)
+    /**
+     * Converts percentage marks into grade points using the absolute
+     * grading scale. Marks below 40 yield 0 (fail).
+     * @param {number} marks - Marks obtained out of 100.
+     * @returns {number} Grade point on a 10-point scale.
+     */
     function convertMarksToGradePoint(marks) {
       if (marks >= 91) return 10.0;
       if (marks >= 86) return 9.0;
