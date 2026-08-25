@@ -6,18 +6,21 @@
   <title>SGPA Calculator (CSE)</title>
   <link rel="icon" type="image/jpeg" href="images.jpeg" />
 
-  <!-- Animate.css for entrance animations -->
+  <!-- External CSS libraries for entrance animations and icons -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
-  <!-- Font Awesome for icons -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
   />
+
+  <!-- Page-specific styles -->
   <style>
-    /* CSS Custom Properties */
+    /* =========================================================
+       CSS Variables / Theme tokens
+       ========================================================= */
     :root {
       --color-primary: #6a0572;
       --color-secondary: #9d65c9;
@@ -34,7 +37,9 @@
       --transition-fast: 0.3s;
     }
 
-    /* Reset & base styles */
+    /* =========================================================
+       Reset & base layout
+       ========================================================= */
     *,
     *::before,
     *::after {
@@ -49,7 +54,9 @@
       color: var(--color-text);
     }
 
-    /* Wave Video Background */
+    /* =========================================================
+       Background layers
+       ========================================================= */
     .wave-background {
       position: fixed;
       inset: 0;
@@ -63,7 +70,6 @@
       object-fit: cover;
     }
 
-    /* Particles background container */
     #particles-js {
       position: fixed;
       inset: 0;
@@ -71,7 +77,9 @@
       pointer-events: none;
     }
 
-    /* Main container styling */
+    /* =========================================================
+       Main application container
+       ========================================================= */
     .container {
       background: var(--color-bg-dark);
       padding: 30px;
@@ -87,7 +95,9 @@
       text-align: center;
     }
 
-    /* Table styling with curvy edges */
+    /* =========================================================
+       Course marks table
+       ========================================================= */
     table {
       width: 100%;
       border-collapse: separate;
@@ -116,13 +126,14 @@
       border: 1px solid var(--color-border);
     }
 
-    /* Icon styling inside table cells */
     .course-icon {
       margin-right: 8px;
       color: var(--color-accent);
     }
 
-    /* Input field styling with focus animations */
+    /* =========================================================
+       Form inputs
+       ========================================================= */
     .marks-input {
       background: var(--color-input-bg);
       color: var(--color-text);
@@ -139,7 +150,9 @@
       box-shadow: 0 0 10px var(--color-secondary);
     }
 
-    /* Button styling with hover scale effect */
+    /* =========================================================
+       Action button
+       ========================================================= */
     .calculate-button {
       margin-top: 20px;
       padding: 14px 22px;
@@ -157,7 +170,9 @@
       transform: scale(1.1);
     }
 
-    /* Progress bar container */
+    /* =========================================================
+       Result progress bar
+       ========================================================= */
     .progress-container {
       width: 100%;
       background: var(--color-progress-track);
@@ -166,7 +181,6 @@
       margin-top: 20px;
     }
 
-    /* Progress bar with dynamic width */
     .progress-bar {
       height: 20px;
       width: 0;
@@ -174,7 +188,6 @@
       transition: width 1s ease-in-out;
     }
 
-    /* Result text styling */
     .result-display {
       margin-top: 20px;
       font-size: 22px;
@@ -182,7 +195,9 @@
       animation: fadeIn 1s;
     }
 
-    /* Footer styling */
+    /* =========================================================
+       Footer
+       ========================================================= */
     .app-footer {
       text-align: center;
       padding: 10px;
@@ -193,7 +208,9 @@
       width: 100%;
     }
 
-    /* Mobile-friendly Media Queries */
+    /* =========================================================
+       Responsive adjustments
+       ========================================================= */
     @media (max-width: 768px) {
       .container {
         width: 90%;
@@ -231,18 +248,20 @@
   </style>
 </head>
 <body>
-  <!-- Wave video background -->
+  <!-- Animated wave video background -->
   <div class="wave-background">
     <video id="waveVideo" autoplay muted loop preload="auto">
       <source src="gettyimages-1483075734-640_adpp.mp4" type="video/mp4" />
     </video>
   </div>
-  <!-- Particles container -->
+
+  <!-- Particle effect overlay -->
   <div id="particles-js"></div>
 
-  <!-- Main content container -->
+  <!-- Main SGPA calculator interface -->
   <main class="container animate__animated animate__fadeInDown">
     <h2 class="animate__animated animate__fadeInDown">SGPA Calculator (CSE)</h2>
+
     <table class="animate__animated animate__fadeInUp">
       <thead>
         <tr>
@@ -309,8 +328,11 @@
         </tr>
       </tbody>
     </table>
+
     <button type="button" class="calculate-button" id="calculateButton">Calculate SGPA</button>
+
     <h3 id="result" class="result-display animate__animated"></h3>
+
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -320,15 +342,25 @@
     Developed by <strong>YUG SHAH</strong>
   </footer>
 
-  <!-- tsParticles Library for dynamic background particles -->
+  <!-- tsParticles library for the animated particle background -->
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2"></script>
+
+  <!-- Application logic -->
   <script>
+    /**
+     * Entry point: initializes the particle background and
+     * wires up the SGPA calculator when the DOM is ready.
+     */
     document.addEventListener('DOMContentLoaded', () => {
-      initializeParticles();
-      initializeCalculator();
+      initializeParticleBackground();
+      setupCalculatorEvents();
     });
 
-    function initializeParticles() {
+    /**
+     * Loads the tsParticles configuration into the #particles-js container.
+     * Safely exits if the tsParticles global is unavailable (e.g. CDN blocked).
+     */
+    function initializeParticleBackground() {
       if (typeof tsParticles === 'undefined') {
         return;
       }
@@ -367,54 +399,72 @@
       });
     }
 
-    function initializeCalculator() {
-      const marksInputs = document.querySelectorAll('.marks-input');
+    /**
+     * Attaches event listeners to all marks inputs and the calculate button.
+     */
+    function setupCalculatorEvents() {
+      const markInputs = document.querySelectorAll('.marks-input');
       const calculateButton = document.getElementById('calculateButton');
 
-      marksInputs.forEach(input => {
-        input.addEventListener('input', calculateSGPA);
+      markInputs.forEach(input => {
+        input.addEventListener('input', calculateSemesterGPA);
       });
 
-      calculateButton.addEventListener('click', calculateSGPA);
+      calculateButton.addEventListener('click', calculateSemesterGPA);
     }
 
-    function calculateSGPA() {
+    /**
+     * Computes the Semester Grade Point Average (SGPA) using the
+     * formula: sum(gradePoint * credits) / sum(credits).
+     */
+    function calculateSemesterGPA() {
       let totalCredits = 0;
-      let totalWeightedGradePoints = 0;
+      let weightedGradePointsSum = 0;
 
       document.querySelectorAll('.marks-input').forEach(input => {
         const marks = parseFloat(input.value) || 0;
         const credits = parseFloat(input.dataset.credits) || 0;
         const gradePoint = convertMarksToGradePoint(marks);
 
-        totalWeightedGradePoints += gradePoint * credits;
+        weightedGradePointsSum += gradePoint * credits;
         totalCredits += credits;
       });
 
-      const sgpa = totalCredits > 0
-        ? (totalWeightedGradePoints / totalCredits).toFixed(2)
+      const semesterGPA = totalCredits > 0
+        ? (weightedGradePointsSum / totalCredits).toFixed(2)
         : null;
 
-      renderResult(sgpa);
+      displayResult(semesterGPA);
     }
 
-    function renderResult(sgpa) {
-      const resultElement = document.getElementById('result');
+    /**
+     * Updates the result heading and progress bar based on the computed SGPA.
+     *
+     * @param {string|null} semesterGPA - The calculated SGPA value, or null if no credits.
+     */
+    function displayResult(semesterGPA) {
+      const resultHeading = document.getElementById('result');
       const progressBar = document.getElementById('progressBar');
 
-      if (sgpa === null) {
-        resultElement.textContent = 'SGPA: N/A';
+      if (semesterGPA === null) {
+        resultHeading.textContent = 'SGPA: N/A';
         progressBar.style.width = '0%';
       } else {
-        resultElement.textContent = `SGPA: ${sgpa}`;
-        const progressPercentage = Math.min((parseFloat(sgpa) / 10) * 100, 100);
+        resultHeading.textContent = `SGPA: ${semesterGPA}`;
+        const progressPercentage = Math.min((parseFloat(semesterGPA) / 10) * 100, 100);
         progressBar.style.width = `${progressPercentage}%`;
       }
 
-      resultElement.classList.add('animate__fadeIn');
+      resultHeading.classList.add('animate__fadeIn');
     }
 
-    // Updated grading function (per the absolute grading system)
+    /**
+     * Converts a raw percentage score into a grade point as per the
+     * absolute grading system used by the application.
+     *
+     * @param {number} marks - Percentage marks out of 100.
+     * @returns {number} Corresponding grade point; returns 0 for failing scores.
+     */
     function convertMarksToGradePoint(marks) {
       if (marks >= 91) return 10.0;
       if (marks >= 86) return 9.0;
